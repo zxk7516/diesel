@@ -15,9 +15,9 @@ before_script:
 script:
 - |
   if [[ "$TRAVIS_RUST_VERSION" == nightly* ]]; then
-    (cd diesel && travis-cargo test -- --no-default-features --features "unstable chrono $BACKEND")
+    (cd diesel && RUST_BACKTRACE=1 travis-cargo test -- --no-default-features --features "unstable chrono $BACKEND")
   else
-    (RUST_BACKTRACE=1 cd diesel && travis-cargo test -- --no-default-features --features "chrono $BACKEND")
+    (cd diesel && RUST_BACKTRACE=1 travis-cargo test -- --no-default-features --features "chrono $BACKEND")
   fi &&
   if [[ "$BACKEND" == postgres ]]; then
     (cd examples/postgres && ./test_all)
