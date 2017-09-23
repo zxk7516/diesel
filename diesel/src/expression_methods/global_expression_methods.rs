@@ -248,26 +248,28 @@ pub trait ExpressionMethods: Expression + Sized {
         LtEq::new(self, other.as_expression())
     }
 
-    /// Creates a SQL `BETWEEN` expression using the given range.
-    fn between<T: AsExpression<Self::SqlType>>(
-        self,
-        other: ::std::ops::Range<T>,
-    ) -> Between<Self, And<T::Expression, T::Expression>> {
-        Between::new(
-            self,
-            And::new(other.start.as_expression(), other.end.as_expression()),
-        )
+    /// Creates a SQL `BETWEEN` expression using the given lower and upper
+    /// bounds.
+    fn between<T, U>(self, lower: T, upper: U) -> Between<Self, And<T::Expression, U::Expression>>
+    where
+        T: AsExpression<Self::SqlType>,
+        U: AsExpression<Self::SqlType>,
+    {
+        Between::new(self, And::new(lower.as_expression(), upper.as_expression()))
     }
 
-    /// Creates a SQL `NOT BETWEEN` expression using the given range.
-    fn not_between<T: AsExpression<Self::SqlType>>(
+    /// Creates a SQL `NOT BETWEEN` expression using the given lower and upper
+    /// bounds.
+    fn not_between<T, U>(
         self,
-        other: ::std::ops::Range<T>,
-    ) -> NotBetween<Self, And<T::Expression, T::Expression>> {
-        NotBetween::new(
-            self,
-            And::new(other.start.as_expression(), other.end.as_expression()),
-        )
+        lower: T,
+        upper: U,
+    ) -> NotBetween<Self, And<T::Expression, U::Expression>>
+    where
+        T: AsExpression<Self::SqlType>,
+        U: AsExpression<Self::SqlType>,
+    {
+        NotBetween::new(self, And::new(lower.as_expression(), upper.as_expression()))
     }
 
     /// Creates a SQL `DESC` expression, representing this expression in
